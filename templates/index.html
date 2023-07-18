@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Event Attendance Confirmation System</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Welcome to the Event Attendance Confirmation System</h1>
+
+    <h2>Events</h2>
+    {% for event in events %}
+    <div class="event">
+        <h3>{{ event.name }}</h3>
+        <p>{{ event.description }}</p>
+        <p>Date: {{ event.date.strftime('%Y-%m-%d') }}</p>  <!-- 日付を表示します -->
+
+        <!-- ここからイベントごとの出席情報を表示する部分を追加します -->
+        <h4>Attendance</h4>
+        {% for attendance in attendances %}
+            {% if attendance.event_id == event.id %}
+                <p>{{ attendance.user_name }}: {{ attendance.attendance_status }}</p>
+            {% endif %}
+        {% endfor %}
+
+        <h4>Confirm Attendance</h4>
+        <form action="{{ url_for('confirm_attendance', event_id=event.id) }}" method="post">
+            <input type="text" name="user_name" placeholder="Your name" required>  <!-- ユーザ名の入力フィールドを追加します -->
+            <label for="attendance">Attendance:</label>
+            <select name="attendance" id="attendance">
+                <option value="attending">Attending</option>
+                <option value="not_attending">Not Attending</option>
+            </select>
+            <input type="submit" value="Confirm">
+        </form>
+    </div>
+    {% endfor %}
+
+    <h2>Create Event</h2>
+    <form action="{{ url_for('create_event') }}" method="post">
+        <input type="text" name="name" placeholder="Event name" required>
+        <input type="text" name="description" placeholder="Event description" required>
+        <input type="date" name="date" placeholder="Event date">
+        <input type="submit" value="Create Event">
+    </form>
+</body>
+</html>
